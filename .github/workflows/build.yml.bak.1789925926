@@ -28,17 +28,7 @@ jobs:
         with:
           gradle-version: '8.5'
 
-      - name: Decode keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/meekeyboard.keystore
-          ls -la $RUNNER_TEMP/meekeyboard.keystore
-
-      - name: Build Debug APK (signed)
-        env:
-          KEYSTORE_PATH: ${{ runner.temp }}/meekeyboard.keystore
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Build Debug APK
         run: gradle assembleDebug --stacktrace --no-daemon
 
       - name: Upload APK
@@ -48,7 +38,3 @@ jobs:
           name: meeKeyboard-debug
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: warn
-
-      - name: Clean up keystore
-        if: always()
-        run: rm -f $RUNNER_TEMP/meekeyboard.keystore
