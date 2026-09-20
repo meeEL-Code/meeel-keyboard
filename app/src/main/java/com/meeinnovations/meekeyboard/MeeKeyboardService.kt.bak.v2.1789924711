@@ -18,23 +18,20 @@ class MeeKeyboardService : InputMethodService() {
     private val FG_TEXT   = Color.WHITE
     private val FG_BRAND  = Color.parseColor("#60a5fa")
 
-    private fun dpToPx(dp: Int): Int =
-        (dp * resources.displayMetrics.density).toInt()
-
     override fun onCreateInputView(): View {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(BG_DARK)
-            setPadding(dpToPx(2), dpToPx(2), dpToPx(2), dpToPx(4))
+            setPadding(4, 4, 4, 8)
         }
 
         // Brand label
         root.addView(TextView(this).apply {
             text = "meeKeyboard"
             setTextColor(FG_BRAND)
-            textSize = 8f
+            textSize = 10f
             gravity = Gravity.CENTER
-            setPadding(0, 0, 0, dpToPx(2))
+            setPadding(0, 2, 0, 4)
         })
 
         // Row 1 — numbers
@@ -84,14 +81,13 @@ class MeeKeyboardService : InputMethodService() {
     }
 
     private fun baseParams(weight: Float): LinearLayout.LayoutParams =
-        LinearLayout.LayoutParams(0, dpToPx(42), weight).apply {
-            val m = dpToPx(2)
-            setMargins(m, m, m, m)
+        LinearLayout.LayoutParams(0, 130, weight).apply {
+            setMargins(3, 3, 3, 3)
         }
 
     private fun letterKey(label: String): Button = Button(this).apply {
         text = label
-        textSize = 14f
+        textSize = 15f
         setTextColor(FG_TEXT)
         setBackgroundColor(BG_KEY)
         isAllCaps = false
@@ -101,7 +97,7 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun symbolKey(label: String): Button = Button(this).apply {
         text = label
-        textSize = 14f
+        textSize = 15f
         setTextColor(FG_BRAND)
         setBackgroundColor(BG_SYMBOL)
         layoutParams = baseParams(1f)
@@ -110,7 +106,7 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun specialKey(label: String, action: String, weight: Float = 1f): Button = Button(this).apply {
         text = label
-        textSize = 14f
+        textSize = 15f
         setTextColor(FG_TEXT)
         setBackgroundColor(BG_SPECIAL)
         layoutParams = baseParams(weight)
@@ -125,7 +121,7 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun spaceKey(): Button = Button(this).apply {
         text = "Space"
-        textSize = 12f
+        textSize = 13f
         setTextColor(FG_TEXT)
         setBackgroundColor(BG_SYMBOL)
         layoutParams = baseParams(4f)
