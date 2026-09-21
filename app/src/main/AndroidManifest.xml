@@ -21,5 +21,12 @@
                 android:resource="@xml/method" />
         </service>
 
+        <activity
+            android:name=".ImagePickerActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:noHistory="true" />
+
     </application>
 </manifest>
