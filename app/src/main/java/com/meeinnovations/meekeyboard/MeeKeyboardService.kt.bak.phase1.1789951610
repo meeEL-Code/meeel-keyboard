@@ -2,9 +2,6 @@ package com.meeinnovations.meekeyboard
 
 import android.graphics.Color
 import android.inputmethodservice.InputMethodService
-import android.os.Handler
-import android.os.Looper
-import android.view.HapticFeedbackConstants
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -12,16 +9,15 @@ import android.widget.LinearLayout
 
 class MeeKeyboardService : InputMethodService() {
 
-    private val BG_DARK    = Color.parseColor("#0a0f17")
-    private val BG_KEY     = Color.parseColor("#1a2336")
-    private val BG_SPECIAL = Color.parseColor("#131d2e")
-    private val BG_SYMBOL  = Color.parseColor("#0f1724")
-    private val FG_TEXT    = Color.WHITE
-    private val FG_BRAND   = Color.parseColor("#60a5fa")
+    private val BG_DARK   = Color.parseColor("#0a0f17")
+    private val BG_KEY    = Color.parseColor("#1a2336")
+    private val BG_SPECIAL= Color.parseColor("#131d2e")
+    private val BG_SYMBOL = Color.parseColor("#0f1724")
+    private val FG_TEXT   = Color.WHITE
+    private val FG_BRAND  = Color.parseColor("#60a5fa")
 
-    // Backspace repeat
-    private val handler = Handler(Looper.getMainLooper())
-    private var backspaceRepeat: Runnable? = null
+    private fun dpToPx(dp: Int): Int =
+        (dp * resources.displayMetrics.density).toInt()
 
     override fun onCreateInputView(): View {
         val root = LinearLayout(this).apply {
@@ -30,12 +26,12 @@ class MeeKeyboardService : InputMethodService() {
             setPadding(dpToPx(2), dpToPx(3), dpToPx(2), dpToPx(3))
         }
 
-        // Row 1 — numbers + backspace
+        // Row 1 — numbers
         val r1 = row()
         listOf("1","2","3","4","5","6","7","8","9","0").forEach {
             r1.addView(letterKey(it))
         }
-        r1.addView(backspaceKey())
+        r1.addView(specialKey("⌫", "Backspace", 1.4f))
         root.addView(r1)
 
         // Row 2 — qwerty
@@ -45,7 +41,7 @@ class MeeKeyboardService : InputMethodService() {
         }
         root.addView(r2)
 
-        // Row 3 — asdf + enter
+        // Row 3 — asdf
         val r3 = row()
         listOf("a","s","d","f","g","h","j","k","l").forEach {
             r3.addView(letterKey(it))
@@ -72,9 +68,6 @@ class MeeKeyboardService : InputMethodService() {
         return root
     }
 
-    private fun dpToPx(dp: Int): Int =
-        (dp * resources.displayMetrics.density).toInt()
-
     private fun row(): LinearLayout = LinearLayout(this).apply {
         orientation = LinearLayout.HORIZONTAL
     }
@@ -85,13 +78,6 @@ class MeeKeyboardService : InputMethodService() {
             setMargins(m, m, m, m)
         }
 
-    private fun haptic(v: View) {
-        v.performHapticFeedback(
-            HapticFeedbackConstants.KEYBOARD_TAP,
-            HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-        )
-    }
-
     private fun letterKey(label: String): Button = Button(this).apply {
         text = label
         textSize = 14f
@@ -99,10 +85,7 @@ class MeeKeyboardService : InputMethodService() {
         setBackgroundColor(BG_KEY)
         isAllCaps = false
         layoutParams = baseParams(1f)
-        setOnClickListener { v ->
-            haptic(v)
-            commit(label)
-        }
+        setOnClickListener { commit(label) }
     }
 
     private fun symbolKey(label: String): Button = Button(this).apply {
@@ -111,10 +94,7 @@ class MeeKeyboardService : InputMethodService() {
         setTextColor(FG_BRAND)
         setBackgroundColor(BG_SYMBOL)
         layoutParams = baseParams(1f)
-        setOnClickListener { v ->
-            haptic(v)
-            commit(label)
-        }
+        setOnClickListener { commit(label) }
     }
 
     private fun specialKey(label: String, action: String, weight: Float = 1f): Button = Button(this).apply {
@@ -123,61 +103,13 @@ class MeeKeyboardService : InputMethodService() {
         setTextColor(FG_TEXT)
         setBackgroundColor(BG_SPECIAL)
         layoutParams = baseParams(weight)
-        setOnClickListener { v ->
-            haptic(v)
+        setOnClickListener {
             val ic = currentInputConnection ?: return@setOnClickListener
             when (action) {
-                "Enter" -> ic.commitText("\n", 1)
+                "Backspace" -> ic.deleteSurroundingText(1, 0)
+                "Enter"     -> ic.commitText("\n", 1)
             }
         }
-    }
-
-    private fun backspaceKey(): Button = Button(this).apply {
-        text = "⌫"
-        textSize = 14f
-        setTextColor(FG_TEXT)
-        setBackgroundColor(BG_SPECIAL)
-        layoutParams = baseParams(1.4f)
-
-        // Single tap — normal delete
-        setOnClickListener { v ->
-            haptic(v)
-            currentInputConnection?.deleteSurroundingText(1, 0)
-        }
-
-        // Long press — start repeating
-        setOnLongClickListener { v ->
-            haptic(v)
-            startBackspaceRepeat()
-            true
-        }
-
-        // Release — stop repeating (also fires for click)
-        setOnTouchListener { v, event ->
-            if (event.action == android.view.MotionEvent.ACTION_UP ||
-                event.action == android.view.MotionEvent.ACTION_CANCEL) {
-                stopBackspaceRepeat()
-            }
-            false
-        }
-    }
-
-    private fun startBackspaceRepeat() {
-        stopBackspaceRepeat()
-        val r = object : Runnable {
-            override fun run() {
-                currentInputConnection?.deleteSurroundingText(1, 0)
-                handler.postDelayed(this, 60L) // ~16 chars/sec
-            }
-        }
-        backspaceRepeat = r
-        // Initial delay before starting fast delete
-        handler.postDelayed(r, 250L)
-    }
-
-    private fun stopBackspaceRepeat() {
-        backspaceRepeat?.let { handler.removeCallbacks(it) }
-        backspaceRepeat = null
     }
 
     private fun spaceKey(): Button = Button(this).apply {
@@ -186,19 +118,11 @@ class MeeKeyboardService : InputMethodService() {
         setTextColor(FG_TEXT)
         setBackgroundColor(BG_SYMBOL)
         layoutParams = baseParams(4f)
-        setOnClickListener { v ->
-            haptic(v)
-            commit(" ")
-        }
+        setOnClickListener { commit(" ") }
     }
 
     private fun commit(text: String) {
         val ic = currentInputConnection ?: return
         ic.commitText(text, 1)
-    }
-
-    override fun onDestroy() {
-        stopBackspaceRepeat()
-        super.onDestroy()
     }
 }
