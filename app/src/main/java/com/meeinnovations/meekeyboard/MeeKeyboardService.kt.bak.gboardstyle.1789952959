@@ -21,13 +21,13 @@ import android.widget.TextView
 class MeeKeyboardService : InputMethodService() {
 
     private val BG_DARK    = Color.parseColor("#0a0f17")
-    private val BG_KEY     = Color.parseColor("#2A3441")
-    private val BG_SPECIAL = Color.parseColor("#1F2937")
-    private val BG_SYMBOL  = Color.parseColor("#1A2336")
+    private val BG_KEY     = Color.parseColor("#1a2336")
+    private val BG_SPECIAL = Color.parseColor("#131d2e")
+    private val BG_SYMBOL  = Color.parseColor("#0f1724")
     private val BG_PANEL   = Color.parseColor("#080d16")
-    private val BG_ITEM    = Color.parseColor("#2A3441")
+    private val BG_ITEM    = Color.parseColor("#1a2336")
     private val BG_TOOLBAR = Color.parseColor("#0f1524")
-    private val FG_TEXT    = Color.parseColor("#E8EAED")
+    private val FG_TEXT    = Color.WHITE
     private val FG_BRAND   = Color.parseColor("#60a5fa")
     private val FG_MUTED   = Color.parseColor("#64748b")
 
@@ -525,8 +525,8 @@ class MeeKeyboardService : InputMethodService() {
     }
 
     private fun baseParams(weight: Float): LinearLayout.LayoutParams =
-        LinearLayout.LayoutParams(0, dpToPx(44), weight).apply {
-            val m = dpToPx(3)
+        LinearLayout.LayoutParams(0, dpToPx(42), weight).apply {
+            val m = dpToPx(2)
             setMargins(m, m, m, m)
         }
 
@@ -539,34 +539,28 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun letterKey(label: String): Button = Button(this).apply {
         text = label
-        textSize = 15f
+        textSize = 14f
         setTextColor(FG_TEXT)
-        setBackgroundResource(R.drawable.bg_key)
-        setPadding(0, 0, 0, 0)
+        setBackgroundColor(BG_KEY)
         isAllCaps = false
-        stateListAnimator = null
         layoutParams = baseParams(1f)
         setOnClickListener { v -> haptic(v); commit(label) }
     }
 
     private fun symbolKey(label: String): Button = Button(this).apply {
         text = label
-        textSize = 15f
+        textSize = 14f
         setTextColor(FG_BRAND)
-        setBackgroundResource(R.drawable.bg_key_symbol)
-        setPadding(0, 0, 0, 0)
-        stateListAnimator = null
+        setBackgroundColor(BG_SYMBOL)
         layoutParams = baseParams(1f)
         setOnClickListener { v -> haptic(v); commit(label) }
     }
 
     private fun specialKey(label: String, action: String, weight: Float = 1f): Button = Button(this).apply {
         text = label
-        textSize = 15f
+        textSize = 14f
         setTextColor(FG_TEXT)
-        setBackgroundResource(R.drawable.bg_key_special)
-        setPadding(0, 0, 0, 0)
-        stateListAnimator = null
+        setBackgroundColor(BG_SPECIAL)
         layoutParams = baseParams(weight)
         setOnClickListener { v ->
             haptic(v)
@@ -576,11 +570,9 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun backspaceKey(): Button = Button(this).apply {
         text = "⌫"
-        textSize = 15f
+        textSize = 14f
         setTextColor(FG_TEXT)
-        setBackgroundResource(R.drawable.bg_key_special)
-        setPadding(0, 0, 0, 0)
-        stateListAnimator = null
+        setBackgroundColor(BG_SPECIAL)
         layoutParams = baseParams(1.4f)
 
         setOnClickListener { v ->
@@ -620,11 +612,9 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun spaceKey(): Button = Button(this).apply {
         text = "Space"
-        textSize = 13f
+        textSize = 12f
         setTextColor(FG_TEXT)
-        setBackgroundResource(R.drawable.bg_key_space)
-        setPadding(0, 0, 0, 0)
-        stateListAnimator = null
+        setBackgroundColor(BG_SYMBOL)
         layoutParams = baseParams(4f)
         setOnClickListener { v -> haptic(v); commit(" ") }
     }
@@ -632,13 +622,11 @@ class MeeKeyboardService : InputMethodService() {
     private fun actionBtn(label: String, onClick: () -> Unit): Button {
         return Button(this).apply {
             text = label
-            textSize = 13f
+            textSize = 12f
             setTextColor(FG_TEXT)
-            setBackgroundResource(R.drawable.bg_key_special)
-            setPadding(0, 0, 0, 0)
+            setBackgroundColor(BG_ITEM)
             isAllCaps = false
-            stateListAnimator = null
-            val lp = LinearLayout.LayoutParams(0, dpToPx(44), 1f)
+            val lp = LinearLayout.LayoutParams(0, dpToPx(42), 1f)
             val m = dpToPx(3)
             lp.setMargins(m, m, m, m)
             layoutParams = lp
