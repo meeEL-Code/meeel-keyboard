@@ -125,7 +125,7 @@ class MeeKeyboardService : InputMethodService() {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(BG_DARK)
-            setPadding(dpToPx(2), dpToPx(2), dpToPx(2), dpToPx(2))
+            setPadding(dpToPx(2), dpToPx(2), dpToPx(2), dpToPx(3))
         }
 
         // Toolbar strip
@@ -525,8 +525,8 @@ class MeeKeyboardService : InputMethodService() {
     }
 
     private fun baseParams(weight: Float): LinearLayout.LayoutParams =
-        LinearLayout.LayoutParams(0, dpToPx(40), weight).apply {
-            val m = dpToPx(2)
+        LinearLayout.LayoutParams(0, dpToPx(44), weight).apply {
+            val m = dpToPx(3)
             setMargins(m, m, m, m)
         }
 
@@ -539,7 +539,7 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun letterKey(label: String): Button = Button(this).apply {
         text = label
-        textSize = 14f
+        textSize = 15f
         setTextColor(FG_TEXT)
         setBackgroundResource(R.drawable.bg_key)
         setPadding(0, 0, 0, 0)
@@ -551,7 +551,7 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun symbolKey(label: String): Button = Button(this).apply {
         text = label
-        textSize = 14f
+        textSize = 15f
         setTextColor(FG_BRAND)
         setBackgroundResource(R.drawable.bg_key_symbol)
         setPadding(0, 0, 0, 0)
@@ -562,7 +562,7 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun specialKey(label: String, action: String, weight: Float = 1f): Button = Button(this).apply {
         text = label
-        textSize = 14f
+        textSize = 15f
         setTextColor(FG_TEXT)
         setBackgroundResource(R.drawable.bg_key_special)
         setPadding(0, 0, 0, 0)
@@ -576,7 +576,7 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun backspaceKey(): Button = Button(this).apply {
         text = "⌫"
-        textSize = 14f
+        textSize = 15f
         setTextColor(FG_TEXT)
         setBackgroundResource(R.drawable.bg_key_special)
         setPadding(0, 0, 0, 0)
@@ -620,7 +620,7 @@ class MeeKeyboardService : InputMethodService() {
 
     private fun spaceKey(): Button = Button(this).apply {
         text = "Space"
-        textSize = 12f
+        textSize = 13f
         setTextColor(FG_TEXT)
         setBackgroundResource(R.drawable.bg_key_space)
         setPadding(0, 0, 0, 0)
