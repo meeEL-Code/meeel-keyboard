@@ -109,43 +109,51 @@ class MeeKeyboardService : InputMethodService() {
 
     private val bgDark: Int get() = when (theme) {
         "light" -> Color.parseColor("#F9FAFB")
-        "blue"  -> Color.parseColor("#0B1220")
-        else    -> Color.parseColor("#0a0f17")
+        "dark"  -> Color.parseColor("#0B1220")
+        "blue"  -> Color.parseColor("#0F172A")
+        else    -> Color.parseColor("#0B1220")
     }
     private val bgKey: Int get() = when (theme) {
         "light" -> Color.parseColor("#FFFFFF")
+        "dark"  -> Color.parseColor("#1E293B")
         "blue"  -> Color.parseColor("#1E3A8A")
-        else    -> Color.parseColor("#2A3441")
+        else    -> Color.parseColor("#1E293B")
     }
     private val bgSpecial: Int get() = when (theme) {
         "light" -> Color.parseColor("#E5E7EB")
+        "dark"  -> Color.parseColor("#0F1729")
         "blue"  -> Color.parseColor("#1E2D5A")
-        else    -> Color.parseColor("#1F2937")
+        else    -> Color.parseColor("#0F1729")
     }
     private val bgItem: Int get() = when (theme) {
         "light" -> Color.parseColor("#FFFFFF")
+        "dark"  -> Color.parseColor("#1E293B")
         "blue"  -> Color.parseColor("#1E3A8A")
-        else    -> Color.parseColor("#2A3441")
+        else    -> Color.parseColor("#1E293B")
     }
     private val bgToolbar: Int get() = when (theme) {
         "light" -> Color.parseColor("#F3F4F6")
-        "blue"  -> Color.parseColor("#0F1E3D")
-        else    -> Color.parseColor("#0f1524")
+        "dark"  -> Color.parseColor("#0F172A")
+        "blue"  -> Color.parseColor("#0A1E3D")
+        else    -> Color.parseColor("#0F172A")
     }
     private val fgText: Int get() = when (theme) {
         "light" -> Color.parseColor("#111827")
-        "blue"  -> Color.parseColor("#E0E7FF")
-        else    -> Color.parseColor("#E8EAED")
+        "dark"  -> Color.parseColor("#E2E8F0")
+        "blue"  -> Color.parseColor("#DBEAFE")
+        else    -> Color.parseColor("#E2E8F0")
     }
     private val fgBrand: Int get() = when (theme) {
         "light" -> Color.parseColor("#2563EB")
+        "dark"  -> Color.parseColor("#60A5FA")
         "blue"  -> Color.parseColor("#93C5FD")
-        else    -> Color.parseColor("#60a5fa")
+        else    -> Color.parseColor("#60A5FA")
     }
     private val fgMuted: Int get() = when (theme) {
         "light" -> Color.parseColor("#6B7280")
-        "blue"  -> Color.parseColor("#94A3B8")
-        else    -> Color.parseColor("#64748b")
+        "dark"  -> Color.parseColor("#94A3B8")
+        "blue"  -> Color.parseColor("#93C5FD")
+        else    -> Color.parseColor("#94A3B8")
     }
 
     private fun keyBgRes(): Int = if (theme == "light") R.drawable.bg_key_light else R.drawable.bg_key
@@ -360,18 +368,218 @@ class MeeKeyboardService : InputMethodService() {
         listOf("z","x","c","v","b","n","m",".",",").forEach { r4.addView(letterKey(it)) }
         contentContainer.addView(r4)
 
+        // Bottom row — Gboard standard
         val r5 = row()
-        r5.addView(cursorKey(-1))
-        r5.addView(langKey())
-        r5.addView(symbolKey("#"))
-        r5.addView(symbolKey("[]"))
-        r5.addView(symbolKey("-"))
-        r5.addView(symbolKey("!"))
-        r5.addView(spaceKey())
-        r5.addView(cursorKey(1))
+        r5.addView(numberToggleKey())     // ?123
+        r5.addView(commaKey())            // ,
+        r5.addView(spaceKeyWide())        // wide space
+        r5.addView(periodKey())           // .
+        r5.addView(enterBottomKey())      // ⏎
         contentContainer.addView(r5)
 
         applyShiftState()
+    }
+
+    // ─── Gboard-style bottom row keys ─────────────────────
+    private fun numberToggleKey(): Button = Button(this).apply {
+        text = "?123"
+        textSize = 13f
+        setTextColor(fgText)
+        setBackgroundResource(keySpecialRes())
+        setPadding(0, 0, 0, 0)
+        isAllCaps = false
+        stateListAnimator = null
+        layoutParams = baseParams(1.4f)
+        setOnClickListener { v ->
+            haptic(v)
+            showSymbolPage(1)
+        }
+    }
+
+    private fun commaKey(): Button = Button(this).apply {
+        text = ","
+        textSize = 16f
+        setTextColor(fgText)
+        setBackgroundResource(keySpecialRes())
+        setPadding(0, 0, 0, 0)
+        stateListAnimator = null
+        layoutParams = baseParams(1f)
+        setOnClickListener { v ->
+            haptic(v)
+            commit(",")
+            refreshSuggestionBar()
+        }
+        setOnLongClickListener { v ->
+            haptic(v)
+            commit("!")
+            true
+        }
+    }
+
+    private fun periodKey(): Button = Button(this).apply {
+        text = "."
+        textSize = 16f
+        setTextColor(fgText)
+        setBackgroundResource(keySpecialRes())
+        setPadding(0, 0, 0, 0)
+        stateListAnimator = null
+        layoutParams = baseParams(1f)
+        setOnClickListener { v ->
+            haptic(v)
+            commit(".")
+            refreshSuggestionBar()
+        }
+        setOnLongClickListener { v ->
+            haptic(v)
+            commit("?")
+            true
+        }
+    }
+
+    private fun enterBottomKey(): Button = Button(this).apply {
+        text = "\u23CE"
+        textSize = 16f
+        setTextColor(fgText)
+        setBackgroundResource(keySpecialRes())
+        setPadding(0, 0, 0, 0)
+        stateListAnimator = null
+        layoutParams = baseParams(1.4f)
+        setOnClickListener { v ->
+            haptic(v)
+            val ic = currentInputConnection
+            val a = currentInputEditorInfo?.imeOptions?.and(EditorInfo.IME_MASK_ACTION) ?: 0
+            when (a) {
+                EditorInfo.IME_ACTION_SEARCH,
+                EditorInfo.IME_ACTION_SEND,
+                EditorInfo.IME_ACTION_NEXT,
+                EditorInfo.IME_ACTION_DONE,
+                EditorInfo.IME_ACTION_GO -> ic?.performEditorAction(a)
+                else -> ic?.commitText("\n", 1)
+            }
+        }
+    }
+
+    private fun spaceKeyWide(): Button = Button(this).apply {
+        text = if (language == "bn") "বাংলা" else "English"
+        textSize = 11f
+        setTextColor(fgMuted)
+        setBackgroundResource(keySpecialRes())
+        setPadding(0, 0, 0, 0)
+        isAllCaps = false
+        stateListAnimator = null
+        layoutParams = baseParams(4f)
+        setOnClickListener { v ->
+            haptic(v)
+            commitSpace()
+        }
+        setOnLongClickListener { v ->
+            haptic(v)
+            toggleLang()
+            true
+        }
+    }
+
+    private fun showSymbolPage(page: Int) {
+        activePanel = "symbols"
+        contentContainer.removeAllViews()
+
+        if (page == 1) {
+            // Numbers + common symbols
+            val r1 = row()
+            listOf("1","2","3","4","5","6","7","8","9","0").forEach { r1.addView(symbolKey(it)) }
+            contentContainer.addView(r1)
+
+            val r2 = row()
+            listOf("@","#","$","%","&","-","+","(",")","/").forEach { r2.addView(symbolKey(it)) }
+            contentContainer.addView(r2)
+
+            val r3 = row()
+            listOf("*","\"","'",":",";","!","?").forEach { r3.addView(symbolKey(it)) }
+            r3.addView(backspaceKey())
+            contentContainer.addView(r3)
+
+            val r4 = row()
+            r4.addView(symbolPageToggleKey("2/2", 2))
+            r4.addView(symbolKey("<"))
+            r4.addView(symbolKey(">"))
+            r4.addView(symbolKey("["))
+            r4.addView(symbolKey("]"))
+            r4.addView(symbolKey("{"))
+            r4.addView(symbolKey("}"))
+            r4.addView(symbolKey("="))
+            contentContainer.addView(r4)
+
+            val r5 = row()
+            r5.addView(letterPageToggleKey())
+            r5.addView(symbolKey(","))
+            r5.addView(spaceKeyWide())
+            r5.addView(symbolKey("."))
+            r5.addView(enterBottomKey())
+            contentContainer.addView(r5)
+        } else {
+            // Page 2/2 — more symbols
+            val r1 = row()
+            listOf("~","`","|","•","√","π","÷","×","§","∆").forEach { r1.addView(symbolKey(it)) }
+            contentContainer.addView(r1)
+
+            val r2 = row()
+            listOf("£","¢","€","¥","^","°","=","{","}","\").forEach { r2.addView(symbolKey(it)) }
+            contentContainer.addView(r2)
+
+            val r3 = row()
+            listOf("©","®","™","✓","™","…","¿","¡").forEach { r3.addView(symbolKey(it)) }
+            r3.addView(backspaceKey())
+            contentContainer.addView(r3)
+
+            val r4 = row()
+            r4.addView(symbolPageToggleKey("1/2", 1))
+            r4.addView(symbolKey("+"))
+            r4.addView(symbolKey("="))
+            r4.addView(symbolKey("×"))
+            r4.addView(symbolKey("÷"))
+            r4.addView(symbolKey("%"))
+            r4.addView(symbolKey("^"))
+            r4.addView(symbolKey("\u221A"))
+            contentContainer.addView(r4)
+
+            val r5 = row()
+            r5.addView(letterPageToggleKey())
+            r5.addView(symbolKey(","))
+            r5.addView(spaceKeyWide())
+            r5.addView(symbolKey("."))
+            r5.addView(enterBottomKey())
+            contentContainer.addView(r5)
+        }
+    }
+
+    private fun symbolPageToggleKey(label: String, targetPage: Int): Button = Button(this).apply {
+        text = label
+        textSize = 13f
+        setTextColor(fgText)
+        setBackgroundResource(keySpecialRes())
+        setPadding(0, 0, 0, 0)
+        isAllCaps = false
+        stateListAnimator = null
+        layoutParams = baseParams(1.4f)
+        setOnClickListener { v ->
+            haptic(v)
+            showSymbolPage(targetPage)
+        }
+    }
+
+    private fun letterPageToggleKey(): Button = Button(this).apply {
+        text = "ABC"
+        textSize = 13f
+        setTextColor(fgText)
+        setBackgroundResource(keySpecialRes())
+        setPadding(0, 0, 0, 0)
+        isAllCaps = false
+        stateListAnimator = null
+        layoutParams = baseParams(1.4f)
+        setOnClickListener { v ->
+            haptic(v)
+            showKeys()
+        }
     }
 
     private fun showBengaliKeys() {
