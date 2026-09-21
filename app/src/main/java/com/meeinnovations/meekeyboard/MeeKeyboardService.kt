@@ -507,7 +507,7 @@ class MeeKeyboardService : InputMethodService() {
             contentContainer.addView(r1)
 
             val r2 = row()
-            listOf("£","¢","€","¥","^","°","=","{","}","\").forEach { r2.addView(symbolKey(it)) }
+            listOf("£","¢","€","¥","^","°","=","{","}","\\").forEach { r2.addView(symbolKey(it)) }
             contentContainer.addView(r2)
 
             val r3 = row()
