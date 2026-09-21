@@ -391,7 +391,7 @@ class MeeKeyboardService : InputMethodService() {
             setPadding(dpToPx(10), dpToPx(8), dpToPx(10), dpToPx(8))
 
             addView(TextView(this@MeeKeyboardService).apply {
-                text = preview
+                this.text = preview
                 setTextColor(FG_TEXT)
                 textSize = 12f
                 maxLines = 3
