@@ -1,20 +1,14 @@
-name: Release APK
+name: Build Release
 
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version (e.g. v1.0.0)'
-        required: true
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -48,39 +42,34 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: gradle assembleRelease --stacktrace --no-daemon
 
-      - name: Rename APK
-        run: |
-          mkdir -p release
-          cp app/build/outputs/apk/release/app-release.apk release/meeKeyboard.apk
-          ls -la release/
+      - name: Build Release Bundle (AAB for Play Store)
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/meekeyboard.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: gradle bundleRelease --stacktrace --no-daemon
 
-      - name: Create Release
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: meeKeyboard-release-apk
+          path: app/build/outputs/apk/release/*.apk
+
+      - name: Upload Release AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: meeKeyboard-release-aab
+          path: app/build/outputs/bundle/release/*.aab
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          name: meeKeyboard ${{ github.ref_name }}
-          body: |
-            ## meeKeyboard ${{ github.ref_name }}
-
-            On-screen keyboard for meeEL and everyday typing.
-
-            ### Features
-            - QWERTY (English) + Bengali layout
-            - Swipe typing
-            - Word suggestions & auto-correct
-            - Long-press for symbols (Gboard-style)
-            - Clipboard with history
-            - Emoji panel (500+)
-            - Dark / Light / Blue themes
-            - Custom backgrounds (presets + gallery)
-            - Shift, Caps lock, Cursor arrows
-            - Haptic + sound feedback
-
-            ### Install
-            1. Download `meeKeyboard.apk` below
-            2. Tap to install (allow unknown sources)
-            3. Settings → Languages → Keyboards → meeKeyboard ON
           files: |
-            release/meeKeyboard.apk
-          draft: false
-          prerelease: false
+            app/build/outputs/apk/release/*.apk
           generate_release_notes: true
+
+      - name: Clean up keystore
+        if: always()
+        run: rm -f $RUNNER_TEMP/meekeyboard.keystore

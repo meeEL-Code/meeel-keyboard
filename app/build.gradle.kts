@@ -35,7 +35,8 @@ android {
             }
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = false  // keep off for stability, can enable later
+            isShrinkResources = false
             val ksPath = System.getenv("KEYSTORE_PATH")
             if (!ksPath.isNullOrEmpty() && file(ksPath).exists()) {
                 signingConfig = signingConfigs.getByName("release")
