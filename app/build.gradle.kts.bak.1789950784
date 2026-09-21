@@ -15,6 +15,7 @@ android {
         versionName = "1.0.0"
     }
 
+    // Release signing — reads from environment variables
     signingConfigs {
         create("release") {
             val ksPath = System.getenv("KEYSTORE_PATH")
@@ -29,6 +30,7 @@ android {
 
     buildTypes {
         debug {
+            // Use release signing for debug too — same signature always
             val ksPath = System.getenv("KEYSTORE_PATH")
             if (!ksPath.isNullOrEmpty() && file(ksPath).exists()) {
                 signingConfig = signingConfigs.getByName("release")
