@@ -373,7 +373,7 @@ class MeeKeyboardService : InputMethodService() {
         setPadding(0, 0, 0, 0)
         isAllCaps = false
         stateListAnimator = null
-        layoutParams = baseParams(1.2f)
+        layoutParams = baseParams(1.4f)
         setOnClickListener { v ->
             haptic(v)
             showSymbolPage(1)
@@ -387,7 +387,7 @@ class MeeKeyboardService : InputMethodService() {
         setBackgroundResource(keySpecialRes())
         setPadding(0, 0, 0, 0)
         stateListAnimator = null
-        layoutParams = baseParams(0.8f)
+        layoutParams = baseParams(1f)
         setOnClickListener { v ->
             haptic(v)
             commit(",")
@@ -407,7 +407,7 @@ class MeeKeyboardService : InputMethodService() {
         setBackgroundResource(keySpecialRes())
         setPadding(0, 0, 0, 0)
         stateListAnimator = null
-        layoutParams = baseParams(0.8f)
+        layoutParams = baseParams(1f)
         setOnClickListener { v ->
             haptic(v)
             commit(".")
@@ -427,7 +427,7 @@ class MeeKeyboardService : InputMethodService() {
         setBackgroundResource(keySpecialRes())
         setPadding(0, 0, 0, 0)
         stateListAnimator = null
-        layoutParams = baseParams(1.2f)
+        layoutParams = baseParams(1.4f)
         setOnClickListener { v ->
             haptic(v)
             val ic = currentInputConnection
@@ -451,7 +451,7 @@ class MeeKeyboardService : InputMethodService() {
         setPadding(0, 0, 0, 0)
         isAllCaps = false
         stateListAnimator = null
-        layoutParams = baseParams(5.5f)
+        layoutParams = baseParams(4f)
         setOnClickListener { v ->
             haptic(v)
             commitSpace()
