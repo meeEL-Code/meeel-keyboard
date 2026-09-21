@@ -72,11 +72,11 @@ class MeeKeyboardService : InputMethodService() {
             setPadding(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4))
         }
 
-        bar.addView(toolbarButton(R.drawable.ic_emoji, "emoji"))
-        bar.addView(toolbarButton(R.drawable.ic_clipboard, "clipboard"))
-        bar.addView(toolbarButton(R.drawable.ic_keyboard, "keys"))
-        bar.addView(toolbarButton(R.drawable.ic_theme, "theme"))
-        bar.addView(toolbarButton(R.drawable.ic_settings, "settings"))
+        bar.addView(toolbarButton("😊", "emoji"))
+        bar.addView(toolbarButton("📋", "clipboard"))
+        bar.addView(toolbarButton("⌨", "keys"))
+        bar.addView(toolbarButton("🎨", "theme"))
+        bar.addView(toolbarButton("⚙", "settings"))
 
         // Spacer
         bar.addView(View(this).apply {
@@ -84,22 +84,23 @@ class MeeKeyboardService : InputMethodService() {
         })
 
         // Collapse keyboard
-        bar.addView(toolbarButton(R.drawable.ic_collapse, "collapse"))
+        bar.addView(toolbarButton("⌄", "collapse"))
 
         return bar
     }
 
-    private fun toolbarButton(iconRes: Int, action: String): View {
-        val img = android.widget.ImageView(this).apply {
-            setImageResource(iconRes)
-            setColorFilter(FG_TEXT)
-            val size = dpToPx(24)
-            val pad = dpToPx(8)
-            val lp = LinearLayout.LayoutParams(size + pad * 2, size + pad * 2)
+    private fun toolbarButton(symbol: String, action: String): View {
+        val b = TextView(this).apply {
+            text = symbol
+            textSize = 18f
+            setTextColor(FG_TEXT)
+            gravity = Gravity.CENTER
+            val size = dpToPx(40)
+            val lp = LinearLayout.LayoutParams(size, size)
             val m = dpToPx(2)
             lp.setMargins(m, m, m, m)
             layoutParams = lp
-            setPadding(pad, pad, pad, pad)
+            setPadding(0, 0, 0, 0)
 
             setOnClickListener { v ->
                 haptic(v)
@@ -113,7 +114,7 @@ class MeeKeyboardService : InputMethodService() {
                 }
             }
         }
-        return img
+        return b
     }
 
     // ─── Key panels ────────────────────────────────────────
