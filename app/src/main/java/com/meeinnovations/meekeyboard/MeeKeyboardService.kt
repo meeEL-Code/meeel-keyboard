@@ -1475,8 +1475,10 @@ class MeeKeyboardService : InputMethodService() {
             }
             setOnClickListener { v ->
                 haptic(v)
-                background = if (preset == "night") "none" else "preset_$preset"
-                try { prefs.edit().putString("background", background).apply() } catch (_: Throwable) {}
+                this@MeeKeyboardService.background = if (preset == "night") "none" else "preset_$preset"
+                try {
+                    prefs.edit().putString("background", this@MeeKeyboardService.background).apply()
+                } catch (_: Throwable) {}
                 showSettingsPanel()
             }
         }
