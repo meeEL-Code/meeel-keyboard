@@ -5,38 +5,17 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Keyboard base outline (rounded rect) -->
+    <!-- Clean bold "m" — stroke based, rounded ends -->
     <path
         android:fillColor="#00000000"
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="3"
-        android:pathData="M28,34 L80,34 Q84,34 84,38 L84,66 Q84,70 80,70 L28,70 Q24,70 24,66 L24,38 Q24,34 28,34 Z" />
-
-    <!-- Keyboard keys (small squares) -->
-    <path android:fillColor="#FFFFFF" android:pathData="M31,41 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M39,41 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M47,41 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M55,41 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M63,41 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M71,41 h5 v5 h-5 Z" />
-
-    <path android:fillColor="#FFFFFF" android:pathData="M31,49 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M39,49 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M47,49 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M55,49 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M63,49 h5 v5 h-5 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M71,49 h5 v5 h-5 Z" />
-
-    <!-- Space bar (wide) -->
-    <path android:fillColor="#FFFFFF" android:pathData="M38,57 h32 v5 h-32 Z" />
-
-    <!-- Big "m" below keyboard -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M42,78 L42,88 M42,80 Q42,78 45,78 Q48,78 48,80 L48,88 M48,80 Q48,78 51,78 Q54,78 54,80 L54,88 M54,80 Q54,78 57,78 Q60,78 60,80 L60,88"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="2.5"
+        android:strokeWidth="10"
         android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
+        android:strokeLineJoin="round"
+        android:pathData="M 32,76 L 32,48
+                          C 32,36 46,36 50,48
+                          C 50,36 64,36 68,48
+                          L 68,76
+                          M 50,48 L 50,76" />
 
 </vector>
