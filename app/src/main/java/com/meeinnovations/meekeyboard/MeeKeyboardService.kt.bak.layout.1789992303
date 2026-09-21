@@ -361,14 +361,14 @@ class MeeKeyboardService : InputMethodService() {
         contentContainer.addView(r4)
 
         val r5 = row()
-        r5.addView(cursorKey(-1))
+        r5.addView(cursorKey(R.drawable.ic_arrow_left, -1))
         r5.addView(langKey())
         r5.addView(symbolKey("#"))
         r5.addView(symbolKey("[]"))
         r5.addView(symbolKey("-"))
         r5.addView(symbolKey("!"))
         r5.addView(spaceKey())
-        r5.addView(cursorKey(1))
+        r5.addView(cursorKey(R.drawable.ic_arrow_right, 1))
         contentContainer.addView(r5)
 
         applyShiftState()
@@ -404,13 +404,13 @@ class MeeKeyboardService : InputMethodService() {
         contentContainer.addView(r6)
 
         val r7 = row()
-        r7.addView(cursorKey(-1))
+        r7.addView(cursorKey(R.drawable.ic_arrow_left, -1))
         r7.addView(langKey())
         r7.addView(bnSymbolKey("\u0964"))
         r7.addView(bnSymbolKey("\u09F3"))
         r7.addView(bnSymbolKey("\u09CD"))
         r7.addView(spaceKey())
-        r7.addView(cursorKey(1))
+        r7.addView(cursorKey(R.drawable.ic_arrow_right, 1))
         contentContainer.addView(r7)
     }
 
@@ -550,14 +550,14 @@ class MeeKeyboardService : InputMethodService() {
         val isLocked = shiftLocked
         val isOn = shiftOn || shiftLocked
         return Button(this).apply {
-            text = if (isLocked) "\u21EA" else "\u21E7"
-            textSize = 16f
-            setTextColor(fgText)
+            text = ""
             setBackgroundResource(if (isOn) keyShiftOnRes() else keySpecialRes())
             setPadding(0, 0, 0, 0)
-            isAllCaps = false
             stateListAnimator = null
             layoutParams = baseParams(1.4f)
+            setCompoundDrawablesWithIntrinsicBounds(
+                0, if (isLocked) R.drawable.ic_shift_filled else R.drawable.ic_shift, 0, 0
+            )
             setOnClickListener { v -> toggleShift(v) }
         }
     }
@@ -602,15 +602,13 @@ class MeeKeyboardService : InputMethodService() {
         if (shiftOn) { shiftOn = false; applyShiftState() }
     }
 
-    private fun cursorKey(direction: Int): Button = Button(this).apply {
-        text = if (direction < 0) "\u25C0" else "\u25B6"
-        textSize = 11f
-        setTextColor(fgMuted)
+    private fun cursorKey(iconRes: Int, direction: Int): Button = Button(this).apply {
+        text = ""
         setBackgroundResource(keySpecialRes())
         setPadding(0, 0, 0, 0)
-        isAllCaps = false
         stateListAnimator = null
-        layoutParams = baseParams(0.8f)
+        layoutParams = baseParams(1f)
+        setCompoundDrawablesWithIntrinsicBounds(0, iconRes, 0, 0)
         setOnClickListener { v ->
             haptic(v)
             moveCursor(direction)
@@ -618,14 +616,12 @@ class MeeKeyboardService : InputMethodService() {
     }
 
     private fun langKey(): Button = Button(this).apply {
-        text = if (language == "bn") "BN" else "EN"
-        textSize = 12f
-        setTextColor(fgBrand)
+        text = ""
         setBackgroundResource(keySpecialRes())
         setPadding(0, 0, 0, 0)
-        isAllCaps = false
         stateListAnimator = null
         layoutParams = baseParams(1f)
+        setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_globe, 0, 0)
         setOnClickListener { v ->
             haptic(v)
             toggleLang()
