@@ -421,15 +421,9 @@ class MeeKeyboardService : InputMethodService() {
     }
 
     private fun enterBottomKey(): Button = Button(this).apply {
-        if (enterLabel == "\u23CE" || enterLabel.isBlank()) {
-            text = ""
-            setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_enter, 0, 0)
-        } else {
-            text = enterLabel
-            textSize = 12f
-            setTextColor(fgText)
-            isAllCaps = false
-        }
+        text = "\u23CE"
+        textSize = 16f
+        setTextColor(fgText)
         setBackgroundResource(keySpecialRes())
         setPadding(0, 0, 0, 0)
         stateListAnimator = null
@@ -716,12 +710,13 @@ class MeeKeyboardService : InputMethodService() {
     }
 
     private fun backspaceKey(): Button = Button(this).apply {
-        text = ""
+        text = "\u232B"
+        textSize = 14f
+        setTextColor(fgText)
         setBackgroundResource(keySpecialRes())
         setPadding(0, 0, 0, 0)
         stateListAnimator = null
         layoutParams = baseParams(1.4f)
-        setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_backspace, 0, 0)
         setOnClickListener { v ->
             haptic(v)
             if (!undoAutoCorrectIfRecent()) {
@@ -747,25 +742,16 @@ class MeeKeyboardService : InputMethodService() {
         val isLocked = shiftLocked
         val isOn = shiftOn || shiftLocked
         return Button(this).apply {
-            text = ""
+            text = if (isLocked) "\u21EA" else "\u21E7"
+            textSize = 16f
+            setTextColor(fgText)
             setBackgroundResource(if (isOn) keyShiftOnRes() else keySpecialRes())
             setPadding(0, 0, 0, 0)
             isAllCaps = false
             stateListAnimator = null
             layoutParams = baseParams(1.4f)
-            val iconRes = if (isLocked) R.drawable.ic_shift_filled else R.drawable.ic_shift
-            setCompoundDrawablesWithIntrinsicBounds(0, iconRes, 0, 0)
-            if (isOn) setColorFilterFilterIfSupported(this, fgText)
             setOnClickListener { v -> toggleShift(v) }
         }
-    }
-
-    private fun setColorFilterFilterIfSupported(view: View, color: Int) {
-        try {
-            (view as? android.widget.TextView)?.compoundDrawables?.forEach { d ->
-                d?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
-            }
-        } catch (_: Throwable) {}
     }
 
     private fun toggleShift(v: View) {
