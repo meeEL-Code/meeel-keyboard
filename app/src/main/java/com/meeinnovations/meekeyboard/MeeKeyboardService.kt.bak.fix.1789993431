@@ -109,6 +109,7 @@ class MeeKeyboardService : InputMethodService() {
 
     private val bgDark: Int get() = when (theme) {
         "light" -> Color.parseColor("#F5F5F5")
+        "dark"  -> Color.parseColor("#0F1E3D")
         else    -> Color.parseColor("#0F1E3D")
     }
     private val bgKey: Int get() = when (theme) {
@@ -139,6 +140,7 @@ class MeeKeyboardService : InputMethodService() {
         "light" -> Color.parseColor("#6B7280")
         else    -> Color.parseColor("#9AA0A6")
     }
+
 
     private fun keyBgRes(): Int = if (theme == "light") R.drawable.bg_key_light else R.drawable.bg_key
     private fun keySpecialRes(): Int = if (theme == "light") R.drawable.bg_key_special_light else R.drawable.bg_key_special
