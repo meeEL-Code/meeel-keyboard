@@ -5,17 +5,37 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Clean bold "m" — stroke based, rounded ends -->
+    <!-- Keyboard body (rounded rectangle outline) -->
     <path
         android:fillColor="#00000000"
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="10"
-        android:strokeLineCap="round"
+        android:strokeWidth="4"
         android:strokeLineJoin="round"
-        android:pathData="M 32,76 L 32,48
-                          C 32,36 46,36 50,48
-                          C 50,36 64,36 68,48
-                          L 68,76
-                          M 50,48 L 50,76" />
+        android:pathData="M 26,38
+                          L 82,38
+                          Q 86,38 86,42
+                          L 86,66
+                          Q 86,70 82,70
+                          L 26,70
+                          Q 22,70 22,66
+                          L 22,42
+                          Q 22,38 26,38 Z" />
+
+    <!-- Row 1 keys -->
+    <path android:fillColor="#FFFFFF" android:pathData="M 29,45 h 6 v 5 h -6 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 39,45 h 6 v 5 h -6 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 49,45 h 6 v 5 h -6 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 59,45 h 6 v 5 h -6 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 69,45 h 6 v 5 h -6 Z" />
+
+    <!-- Row 2 keys -->
+    <path android:fillColor="#FFFFFF" android:pathData="M 29,54 h 6 v 5 h -6 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 39,54 h 6 v 5 h -6 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 49,54 h 6 v 5 h -6 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 59,54 h 6 v 5 h -6 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 69,54 h 6 v 5 h -6 Z" />
+
+    <!-- Space bar (wide, row 3) -->
+    <path android:fillColor="#FFFFFF" android:pathData="M 36,63 h 36 v 4 h -36 Z" />
 
 </vector>
