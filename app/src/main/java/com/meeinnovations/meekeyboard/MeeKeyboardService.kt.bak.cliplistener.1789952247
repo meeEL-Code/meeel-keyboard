@@ -3,7 +3,6 @@ package com.meeinnovations.meekeyboard
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.inputmethodservice.InputMethodService
@@ -37,89 +36,11 @@ class MeeKeyboardService : InputMethodService() {
     // Which tool panel is open: null = keys, "clipboard", "emoji", ...
     private var activePanel: String? = null
 
-    // Clipboard history
+    // Clipboard history (session-only, in-memory)
     private val clipboardRecent = mutableListOf<String>()
     private val clipboardPinned = mutableListOf<String>()
 
-    private val prefs: SharedPreferences by lazy {
-        getSharedPreferences("meekeyboard", Context.MODE_PRIVATE)
-    }
-
-    private val clipListener = ClipboardManager.OnPrimaryClipChangedListener {
-        onSystemClipboardChanged()
-    }
-    private var clipListenerRegistered = false
-
     private lateinit var contentContainer: LinearLayout
-
-    override fun onStartInput(attribute: android.view.inputmethod.EditorInfo?, restarting: Boolean) {
-        super.onStartInput(attribute, restarting)
-        loadClipboardFromPrefs()
-        registerClipListener()
-    }
-
-    override fun onFinishInput() {
-        super.onFinishInput()
-        unregisterClipListener()
-    }
-
-    private fun registerClipListener() {
-        if (clipListenerRegistered) return
-        try {
-            clipboardManager().addPrimaryClipChangedListener(clipListener)
-            clipListenerRegistered = true
-        } catch (_: Throwable) {}
-    }
-
-    private fun unregisterClipListener() {
-        if (!clipListenerRegistered) return
-        try {
-            clipboardManager().removePrimaryClipChangedListener(clipListener)
-        } catch (_: Throwable) {}
-        clipListenerRegistered = false
-    }
-
-    private fun onSystemClipboardChanged() {
-        val clip = clipboardManager().primaryClip ?: return
-        if (clip.itemCount == 0) return
-        val txt = clip.getItemAt(0).coerceToText(this).toString().trim()
-        if (txt.isEmpty()) return
-        if (clipboardPinned.contains(txt)) return
-        clipboardRecent.remove(txt)
-        clipboardRecent.add(0, txt)
-        while (clipboardRecent.size > 30) clipboardRecent.removeAt(clipboardRecent.size - 1)
-        saveClipboardToPrefs()
-        // If clipboard panel is open, refresh it
-        if (activePanel == "clipboard") showClipboardPanel()
-    }
-
-    private fun saveClipboardToPrefs() {
-        try {
-            prefs.edit()
-                .putString("recent", clipboardRecent.joinToString("\u0001"))
-                .putString("pinned", clipboardPinned.joinToString("\u0001"))
-                .apply()
-        } catch (_: Throwable) {}
-    }
-
-    private fun loadClipboardFromPrefs() {
-        try {
-            if (clipboardRecent.isEmpty()) {
-                val r = prefs.getString("recent", "") ?: ""
-                if (r.isNotEmpty()) {
-                    clipboardRecent.clear()
-                    clipboardRecent.addAll(r.split("\u0001").filter { it.isNotEmpty() })
-                }
-            }
-            if (clipboardPinned.isEmpty()) {
-                val p = prefs.getString("pinned", "") ?: ""
-                if (p.isNotEmpty()) {
-                    clipboardPinned.clear()
-                    clipboardPinned.addAll(p.split("\u0001").filter { it.isNotEmpty() })
-                }
-            }
-        } catch (_: Throwable) {}
-    }
 
     override fun onCreateInputView(): View {
         val root = LinearLayout(this).apply {
@@ -257,7 +178,6 @@ class MeeKeyboardService : InputMethodService() {
         header.addView(iconButton(R.drawable.ic_trash) {
             clipboardRecent.clear()
             clipboardPinned.clear()
-            saveClipboardToPrefs()
             showClipboardPanel()
         })
         contentContainer.addView(header)
@@ -436,14 +356,12 @@ class MeeKeyboardService : InputMethodService() {
                         clipboardRecent.remove(text)
                         clipboardPinned.add(0, text)
                     }
-                    saveClipboardToPrefs()
                     showClipboardPanel()
                     true
                 }
                 2 -> {
                     clipboardRecent.remove(text)
                     clipboardPinned.remove(text)
-                    saveClipboardToPrefs()
                     showClipboardPanel()
                     true
                 }
@@ -640,7 +558,6 @@ class MeeKeyboardService : InputMethodService() {
 
     override fun onDestroy() {
         stopBackspaceRepeat()
-        unregisterClipListener()
         super.onDestroy()
     }
 }
